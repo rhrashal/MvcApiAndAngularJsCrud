@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+		<!-- https://tutorialslink.com/Articles/CRUD-operations-using-AngularJs-in-Aspnet-MVC/45 -->
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/angular.min.js"></script>
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body ng-app="Homeapp" ng-controller="HomeController">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <nav class="navbar navbar-light bg-light justify-content-between">
+                    <a class="navbar-brand"> Employee Information</a>
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </nav>
+                <br />
+                <button type="button" ng-click="createReady()" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap" class="btn btn-outline-primary">Create</button>
+                <div>
+                    <table id="datatable" class="table table-hover">
+                        <tr>
+                            <td> Id</td>
+                            <td> Name </td>
+                            <td> Gender </td>
+                            <td> Department </td>
+                            <td> City </td>
+                            <td> Acction</td>
+                        </tr>
+                        <tr ng-repeat="e in record" ng-class-even="'even'" ng-class-odd="'odd'">
+                            <td> {{e.Id}}</td>
+                            <td> {{e.Name}} </td>
+                            <td> {{e.Gender? 'Male' : 'Female'}} </td>
+                            <td> {{e.Department}} </td>
+                            <td> {{e.City}}</td>
+                            <td>
+                                <button type="button" ng-click="loadrecord(e.Id)" data-toggle="modal" data-target="#DetailsModal" data-whatever="@getbootstrap" class="btn btn-outline-success">Details</button>
+                                <button type="button" ng-click="loadrecord(e.Id)" data-toggle="modal" data-target="#UpdateModal" data-whatever="@getbootstrap" class="btn btn-outline-warning">Edit</button>
+                                <button type="button" ng-click="deleterecord(e.Id)" class="btn btn-outline-danger">Delete</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Add Modal -->
+        <div class="row">
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <!--<label>Id</label>-->
+                                <input type="text" hidden disabled ng-model="register.Id" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" ng-model="register.Name" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="radio" ng-model="register.Gender" value="true" class="form-check-input" name="optradio">Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="radio" ng-model="register.Gender" value="false" class="form-check-input" name="optradio">Female
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <select class="form-control" name="singleSelect" ng-model="register.Department">
+                                    <option value="Accounting">Accounting</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="English">English</option>
+                                </select>
+                                <!--<input type="text" ng-model="register.Department" class="form-control" />-->
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                <select class="form-control" name="singleSelect" ng-model="register.City">
+                                    <option value="Dhaka">Dhaka</option>
+                                    <option value="Chittagong">Chittagong</option>
+                                    <option value="Cumilla">Cumilla</option>                                    
+                                </select>
+                                <!--<input type="text" ng-model="register.City" class="form-control" />-->
+                            </div>
+                            <div class="form-group">
+                                <input type="button" class="btn btn-primary" data-dismiss="modal" ng-click="savedata()" value="{{btntext}}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Model-->
+
+        <div class="row">
+            <div class="modal fade" id="UpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Id</label>
+                                <input type="text" disabled ng-model="register.Id" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" ng-model="register.Name" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="radio" ng-model="register.Gender" value="true" class="form-check-input" name="optradio">Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="radio" ng-model="register.Gender" value="false" class="form-check-input" name="optradio">Female
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <select class="form-control" name="singleSelect" ng-model="register.Department">
+                                    <option value="Accounting">Accounting</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="English">English</option>
+                                </select>
+                                <!--<input type="text" ng-model="register.Department" class="form-control" />-->
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                <select class="form-control" name="singleSelect" ng-model="register.City">
+                                    <option value="Dhaka">Dhaka</option>
+                                    <option value="Chittagong">Chittagong</option>
+                                    <option value="Cumilla">Cumilla</option>
+                                </select>
+                                <!--<input type="text" ng-model="register.City" class="form-control" />-->
+                            </div>
+                            <div class="form-group">
+                                <input type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updatedata()" value="{{btntext}}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delails Modal-->
+        <div class="row">
+            <div class="modal fade" id="DetailsModal" tabindex="-1" role="dialog" aria-labelledby="DetailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Employee Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <table ng-class-even="'even'" ng-class-odd="'odd'" class="table table-hover">
+                                    <tr>
+                                        <td> Id</td>
+                                        <td> {{e.Id}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td> Name </td>
+                                        <td> {{e.Name}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td> Gender </td>
+                                        <td> {{e.Gender? 'Male' : 'Female'}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td> Department </td>
+                                        <td> {{e.Department}} </td>
+                                    </tr>
+                                    <tr>
+                                        <td> City </td>
+                                        <td> {{e.City}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="Scripts/jquery-3.0.0.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+
+    <script type="text/javascript">
+
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus')
+        })
+
+        var app = angular.module("Homeapp", []);
+
+        app.controller("HomeController", function ($scope, $http) {
+            $scope.btntext = "Save";
+            // Add record
+            $scope.savedata = function () {
+                $scope.btntext = "Please Wait..";
+                $http({
+                    method: 'POST',
+                    url: '/api/Employees',
+                    data: $scope.register
+                }).then(function (d) {
+                    $scope.btntext = "Save";
+                    $scope.register = null;
+                    $http.get("/api/Employees").then(function (d) {
+                        $scope.record = d.data;
+                    },function (error) {
+                        alert('Failed');
+                    });
+                    alert('Successfully inserted new Employee');
+                });
+            };
+
+            // Display all record
+
+            $http.get("/api/Employees").then(function (d) {
+                $scope.record = d.data;
+                
+            }, function (error) {
+                alert('Failed');
+            });
+
+
+            // Display record by id
+            $scope.loadrecord = function (id) {
+                $http.get("/api/Employees/" + id).then(function (d) {
+                    $scope.register = d.data;////////
+                    $scope.e = d.data;
+                    $scope.btntext = "Update";
+                }, function (error) {
+                    alert('Failed');
+                });
+            };
+
+            $scope.createReady = function () {
+                $scope.register = null;
+            }
+            // Delete record
+            $scope.deleterecord = function (id) {
+                $http.delete("/api/Employees/" + id).then(function (d) {
+                    console.log(d.data);
+                    $http.get("/api/Employees").then(function (d) {
+                        $scope.record = d.data;
+                    }, function (error) {
+                        alert('Failed');
+                    });
+                }, function (error) {
+                    alert('Failed');
+                });
+            };
+
+            // Update record
+            $scope.updatedata = function () {
+                $scope.btntext = "Please Wait..";
+                $http({
+                    method: 'POST',
+                    url: '/api/Employees',
+                    data: $scope.register
+                }).then(function (d) {
+                    $scope.btntext = "Update";
+                    $scope.register = null;
+                    alert("Updateed employee");
+                    $http.get("/api/Employees").then(function (d) {
+                        $scope.record = d.data;
+                    }, function (error) {
+                        alert('Failed');
+                    });
+                });
+            };
+        });
+    </script>
+</body>
+</html>
